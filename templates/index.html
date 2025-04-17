@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheet Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .sheet-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .sheet-tab {
+            padding: 8px 15px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+        }
+        .sheet-tab.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .sheet-container {
+            overflow: auto;
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            min-width: 100px;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .row-header {
+            background-color: #f2f2f2;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            text-align: center;
+            min-width: 50px;
+        }
+        .corner-header {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .empty-cell {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body class="no-select">
+    <h1>Google Sheet Viewer</h1>
+    
+    <div class="sheet-tabs">
+        {% for sheet in sheets %}
+            <a href="?sheet={{ sheet }}" 
+               class="sheet-tab {% if sheet == current_sheet %}active{% endif %}">
+                {{ sheet }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="sheet-container">
+        <table>
+            <thead>
+                <tr>
+                    <th class="corner-header"></th>
+                    {% for header in column_headers %}
+                        <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                    <tr>
+                        <td class="row-header">{{ loop.index }}</td>
+                        {% for cell in row %}
+                            <td class="{% if not cell %}empty-cell{% endif %}">{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        document.addEventListener('selectstart', event => event.preventDefault());
+        
+        setInterval(() => {
+            window.location.reload();
+        }, 30000);
+    </script>
+</body>
+</html> 
